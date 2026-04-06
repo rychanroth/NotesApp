@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.notesapp.ui.screens.LoginScreen
+import com.example.notesapp.ui.screens.LoginScreenPreview
 import com.example.notesapp.ui.theme.NotesAppTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -20,31 +22,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                LoginScreenPreview()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-    val auth = FirebaseAuth.getInstance()
-    println(auth)
-}
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    NotesAppTheme {
-        Greeting("Android")
-    }
+fun ShutTheFuckUp() {
+    
 }
