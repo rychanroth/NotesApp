@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.notesapp.ui.screens.LoginScreen
 import com.example.notesapp.ui.screens.LoginScreenPreview
+import com.example.notesapp.ui.screens.RegisterScreen
+import com.example.notesapp.ui.screens.RegisterScreenPreview
 import com.example.notesapp.ui.theme.NotesAppTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -22,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesAppTheme {
-                LoginScreenPreview()
+                RegisterScreenPreview()
             }
         }
     }
