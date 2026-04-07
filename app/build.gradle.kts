@@ -65,6 +65,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // =========== Frontend dependencies ==============
+    // AutoMirrored api for extended icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Navigation compose
+    implementation("androidx.navigation:navigation-compose:2.8.4")
+
+    // =========== Firebase dependencies ============================
     // Firebase Bom
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
 
