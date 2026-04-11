@@ -3,12 +3,17 @@ package com.example.notesapp.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notesapp.data.model.AuthState
+import com.example.notesapp.data.model.Result
 import com.example.notesapp.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for authethication screens.
+ * Manage auth state and handles login/register/reset password/logout operations.
+ */
 class AuthViewModel(
      private val repository: AuthRepository = AuthRepository()
 ): ViewModel() {
@@ -33,10 +38,10 @@ class AuthViewModel(
             _authState.value = AuthState.Loading
 
             when (val result = repository.login(email, password)) {
-                is com.example.notesapp.data.model.Result.Success -> {
+                is Result.Success -> {
                     _authState.value = AuthState.Authenticated
                 }
-                is com.example.notesapp.data.model.Result.Error -> {
+                is Result.Error -> {
                     _authState.value = AuthState.Error (
                         result.exception.message ?: "Registration failed"
                     )
@@ -51,10 +56,10 @@ class AuthViewModel(
     fun sendPasswordReset(email: String, onResult: (Boolean, String) -> Unit) {
         viewModelScope.launch {
             when (val result = repository.sendPasswordResetEmail(email)) {
-                is com.example.notesapp.data.model.Result.Success -> {
+                is Result.Success -> {
                     onResult(true, "Password reset email sent!")
                 }
-                is com.example.notesapp.data.model.Result.Error -> {
+                is Result.Error -> {
                     onResult(false, result.exception.message ?: "Failed to send reset email.")
                 }
             }
