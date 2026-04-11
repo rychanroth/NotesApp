@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,15 +31,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.notesapp.ui.viewmodel.AuthViewModel
 
 
 // OptIn for the experimental material 3 api for TopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordScreen(
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    viewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf(" ") }
+    var message by remember { mutableStateOf<String?>(null) }
+    var isError by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     // Scaffold containing the topBar (use experimental TopAppBar)
     Scaffold(
@@ -77,30 +85,55 @@ fun ForgotPasswordScreen(
             // Email TEXTFIELD
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    message = null
+                },
                 label = { Text("Email") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
             )
 
-            Spacer(modifier
-= Modifier.height(24.dp))
+            // Error message if any
+            if (message != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = message!!,
+                    color = if (isError) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Submit Button
             Button(
-                onClick = { /*TODO: Connect to ViewModel */},
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    isLoading = true
+                    viewModel.sendPasswordReset(email) { success, msg ->
+                        isLoading = false
+                        message = msg
+                        isError = !success
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = isLoading && email.isNotBlank()
             ) {
-                Text("Send Reset Link")
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Send Reset Link")
+                }
             }
 
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ForgotPasswordScreenPreview() {
-    ForgotPasswordScreen {  }
 }
