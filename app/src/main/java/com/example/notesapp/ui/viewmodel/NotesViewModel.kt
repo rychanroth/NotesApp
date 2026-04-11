@@ -92,7 +92,7 @@ class NotesViewModel(
                     loadNotes()
                 }
                 is Result.Error -> {
-                    // TODO: Can't update the note.
+                    // Do nothing
                 }
             }
         }
@@ -108,7 +108,7 @@ class NotesViewModel(
                     loadNotes()
                 }
                 is Result.Error -> {
-                    // TODO: Can't delete the note.
+                    // Do nothing
                 }
             }
         }

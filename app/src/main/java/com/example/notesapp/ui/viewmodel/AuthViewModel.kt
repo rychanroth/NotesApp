@@ -73,4 +73,11 @@ class AuthViewModel(
         repository.logout()
         _authState.value = AuthState.Idle
     }
+
+    /**
+     * Reset state.
+     */
+    fun resetState() {
+        _authState.value = AuthState.Idle
+    }
 }
