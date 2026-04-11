@@ -42,7 +42,7 @@ class AuthViewModel(
                     _authState.value = AuthState.Authenticated
                 }
                 is Result.Error -> {
-                    _authState.value = AuthState.Error (
+                    _authState.value = AuthState.Error(
                         result.exception.message ?: "Registration failed"
                     )
                 }
@@ -76,8 +76,28 @@ class AuthViewModel(
 
     /**
      * Reset state.
+     * TODO: EXPERIMENTAL
      */
     fun resetState() {
         _authState.value = AuthState.Idle
+    }
+
+    /**
+     * Register user's account.
+     * TODO: EXPERIMENTAL
+     */
+    fun register(email: String, password: String) {
+        viewModelScope.launch {
+            when (val result = repository.register(email, password)) {
+                is Result.Success -> {
+                    _authState.value = AuthState.Authenticated
+                }
+                is Result.Error -> {
+                    _authState.value = AuthState.Error(
+                        result.exception.message ?: "Failed to register"
+                    )
+                }
+            }
+        }
     }
 }
