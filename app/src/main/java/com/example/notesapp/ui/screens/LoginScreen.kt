@@ -173,11 +173,3 @@ fun LoginScreen(
 
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    NotesAppTheme() {
-        LoginScreen({}, {}, {})
-    }
-}

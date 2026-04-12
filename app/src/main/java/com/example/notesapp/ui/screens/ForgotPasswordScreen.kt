@@ -42,7 +42,7 @@ fun ForgotPasswordScreen(
     onNavigateToLogin: () -> Unit,
     viewModel: AuthViewModel = viewModel()
 ) {
-    var email by remember { mutableStateOf(" ") }
+    var email by remember { mutableStateOf("") }
     var message by remember { mutableStateOf<String?>(null) }
     var isError by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }

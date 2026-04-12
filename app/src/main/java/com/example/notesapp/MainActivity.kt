@@ -13,9 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.notesapp.ui.screens.ForgotPasswordScreenPreview
 import com.example.notesapp.ui.screens.LoginScreen
-import com.example.notesapp.ui.screens.LoginScreenPreview
 import com.example.notesapp.ui.screens.RegisterScreen
 import com.example.notesapp.ui.screens.RegisterScreenPreview
 import com.example.notesapp.ui.theme.NotesAppTheme
@@ -36,10 +34,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-
-@Composable
-fun ShutTheFuckUp() {
-    
 }
