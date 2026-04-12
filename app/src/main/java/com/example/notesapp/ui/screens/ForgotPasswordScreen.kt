@@ -65,12 +65,12 @@ fun ForgotPasswordScreen(
         }
 
     ) {
-        innerpadding ->
+        innerPadding ->
         // content BLOCK
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerpadding)
+                .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -122,7 +122,7 @@ fun ForgotPasswordScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = isLoading && email.isNotBlank()
+                enabled = !isLoading && email.isNotBlank()
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
