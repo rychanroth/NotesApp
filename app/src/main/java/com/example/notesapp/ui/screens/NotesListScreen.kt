@@ -48,6 +48,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.notesapp.Screen
 import com.example.notesapp.data.model.Note
 import com.example.notesapp.data.model.NotesState
+import com.example.notesapp.ui.components.AddNoteDialog
+import com.example.notesapp.ui.components.EditNoteDialog
 import com.example.notesapp.ui.viewmodel.AuthViewModel
 import com.example.notesapp.ui.viewmodel.NotesViewModel
 
@@ -60,6 +62,12 @@ fun NotesListScreen(
 ) {
     // Collect state
     val notesState by notesViewModel.notesState.collectAsState()
+    val selectedNote by notesViewModel.selectedNote.collectAsState()
+
+    // Dialog states
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var noteToDelete by remember { mutableStateOf<Note?>(null)}
 
     // Load notes when screen appears
     LaunchedEffect(Unit) {
@@ -86,7 +94,7 @@ fun NotesListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {/*TODO: Add Show add note dialog */}) {
+            FloatingActionButton(onClick = { showAddDialog = true }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Note"
@@ -96,7 +104,7 @@ fun NotesListScreen(
     ) { innerPadding ->
         when (notesState) {
             is NotesState.Idle -> {
-                // Will transition to loading
+                // Do nohting, will transition to loading
             }
             is NotesState.Loading -> {
                 Box(
@@ -116,7 +124,11 @@ fun NotesListScreen(
                     NotesList(
                         notes = notes,
                         padding = innerPadding,
-                        onDelete = { noteId -> notesViewModel.deleteNote(noteId)}
+                        onEdit = { note -> notesViewModel.selectNote(note) },
+                        onDelete = { note ->
+                            noteToDelete = note
+                            showDeleteDialog = true
+                        }
                     )
                 }
             }
@@ -135,6 +147,83 @@ fun NotesListScreen(
 
             }
         }
+    }
+
+    // Add note DIALOG
+    if (showAddDialog) {
+        AddNoteDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = { title, content ->
+                notesViewModel.addNote(title, content)
+                showAddDialog = false
+            }
+        )
+    }
+
+    // Edit note DIALOG
+    if (selectedNote != null) {
+        EditNoteDialog(
+            note = selectedNote!!,
+            onDismiss = { notesViewModel.selectNote(null) },
+            onConfirm = { title, content ->
+                val updatedNote = selectedNote!!.copy(
+                    title = title,
+                    content = content
+                )
+                notesViewModel.updateNote(updatedNote)
+                notesViewModel.selectNote(null)
+            }
+        )
+    }
+
+    // Delete note confirmation DIALOG
+    // Edit Note Dialog
+    if (selectedNote != null) {
+        EditNoteDialog(
+            note = selectedNote!!,
+            onDismiss = { notesViewModel.selectNote(null) },
+            onConfirm = { title, content ->
+                val updatedNote = selectedNote!!.copy(
+                    title = title,
+                    content = content
+                )
+                notesViewModel.updateNote(updatedNote)
+                notesViewModel.selectNote(null)
+            }
+        )
+    }
+
+    // Delete Confirmation Dialog
+    if (showDeleteDialog && noteToDelete != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+                noteToDelete = null
+            },
+            title = { Text("Delete Note") },
+            text = { Text("Delete \"${noteToDelete?.title}\"?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        noteToDelete?.let { notesViewModel.deleteNote(it.id) }
+                        showDeleteDialog = false
+                        noteToDelete = null
+                    }
+                ) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        noteToDelete = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
 }
@@ -169,7 +258,7 @@ fun EmptyState(padding: PaddingValues) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Tap to create your first note",
+            text = "Tap + to create your first note",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.outline
         )
@@ -184,7 +273,8 @@ fun EmptyState(padding: PaddingValues) {
 private fun NotesList(
     notes: List<Note>,
     padding: PaddingValues,
-    onDelete: (String) -> Unit
+    onEdit: (Note) -> Unit,
+    onDelete: (Note) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -196,7 +286,8 @@ private fun NotesList(
         items(notes, key = { it.id } ) { note ->
             NoteItem(
                 note = note,
-                onDelete = { onDelete(note.id) }
+                onEdit = { onEdit(note) },
+                onDelete = { onDelete(note) }
             )
         }
     }
@@ -210,13 +301,12 @@ private fun NotesList(
 @Composable
 private fun NoteItem(
     note: Note,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { /*TODO: Edit note */}
+        onClick = onEdit
     ) {
         Row(
             modifier = Modifier
@@ -246,7 +336,7 @@ private fun NoteItem(
             }
 
             // Delete BUTTON
-            IconButton(onClick = { showDeleteDialog = true } ) {
+            IconButton(onClick = onDelete ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = "Delete",
@@ -254,29 +344,5 @@ private fun NoteItem(
                 )
             }
         }
-    }
-
-    // Delete dialog confirmation
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Note") },
-            text = { Text("Are you sure you want to delete \"${note.title}\"?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDelete()
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
     }
 }

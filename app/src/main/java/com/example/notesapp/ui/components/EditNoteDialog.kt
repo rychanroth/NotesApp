@@ -3,6 +3,7 @@ package com.example.notesapp.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -13,24 +14,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.notesapp.data.model.Note
 
 /**
- * Dialog for adding a note for the current user.
+ * Dialog for editing the selected note of the current user.
  */
 @Composable
-fun AddNoteDialog(
+fun EditNoteDialog(
+    note: Note,
     onDismiss: () -> Unit,
     onConfirm: (title: String, content: String) -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(note.title) }
+    var content by remember { mutableStateOf(note.content) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Note") },
+        title = { Text("Edit Note") },
         text = {
             Column {
-                // Title TEXTFIELD
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
@@ -38,15 +41,13 @@ fun AddNoteDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.fillMaxWidth())
-
-                // Content TEXTFIELD
+                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
                     label = { Text("Content") },
-                    minLines = 2,
-                    maxLines = 7,
+                    minLines = 3,
+                    maxLines = 8,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -54,11 +55,13 @@ fun AddNoteDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (title.isNotBlank() && content.isNotBlank()) onConfirm(title, content)
+                    if (title.isNotBlank() && content.isNotBlank()) {
+                        onConfirm(title, content)
+                    }
                 },
                 enabled = title.isNotBlank() && content.isNotBlank()
             ) {
-                Text("Add")
+                Text("Save")
             }
         },
         dismissButton = {
@@ -67,6 +70,5 @@ fun AddNoteDialog(
             }
         }
     )
-
 
 }
