@@ -56,7 +56,7 @@ class NotesRepository {
     /**
      * Update an existing note.
      */
-    suspend fun updateNote(note: Note): Result<Unit> {
+    suspend fun updateNote(note: Note): Result<Unit>    {
         return try {
             notesCollection.document(note.id).set(note).await()
             Result.Success(Unit)

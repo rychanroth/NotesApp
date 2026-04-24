@@ -70,6 +70,9 @@ dependencies {
     // AutoMirrored api for extended icons
     implementation("androidx.compose.material:material-icons-extended")
 
+    // Google Fonts
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
+
     // Navigation compose
     implementation("androidx.navigation:navigation-compose:2.8.4")
 

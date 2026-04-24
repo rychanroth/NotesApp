@@ -10,7 +10,7 @@ import com.example.notesapp.data.model.Result
  * Single source of truth for data.
  */
 class AuthRepository {
-    // Firebase auth instance (will be injected later)
+    // Firebase auth instance
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     /**
